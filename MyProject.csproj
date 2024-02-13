@@ -45,7 +45,7 @@ public class SpawnModule : ModuleBase<SocketCommandContext>
 
     public async Task InitializeAsync()
     {
-        await _client.LoginAsync(TokenType.Bot, "YOUR_DISCORD_TOKEN");
+        await _client.LoginAsync(TokenType.Bot, "MTIwNjczMTAwMDM3NDM2MjE1NA.GnSRh0.PSgxoqUrcoBIjLU3bLHMUCdjdIdgLsQ-AJ1Aro");
         await _client.StartAsync();
 
         await _commands.AddModuleAsync<SpawnModule>(_services);
