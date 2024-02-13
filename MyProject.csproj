@@ -1,0 +1,127 @@
+
+
+
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Discord.Net" Version="3.13.1" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+   using System;
+using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using System.Threading.Tasks;
+
+public class SpawnModule : ModuleBase<SocketCommandContext>
+{
+    private readonly string[] InsideMonsterNames = { "Girl", "Lasso", "Bunker Spider", "Centipede", "Blob", "Flowerman", "Spring", "Crawler", "Hoarding bug", "Jester", "Puffer", "Nutcracker" };
+    private readonly string[] OutsideMonsterNames = { "ForestGiant", "MouthDog", "Earth Leviathan", "Baboon Bird", "Masked" };
+
+    private readonly string[] ItemNames = { "Walkie-Talkie", "Pro Flashlight", "Normal Flashlight", "Shovel", "Lockpicker", "Stun Grenade", "Boom Box", "Inhaler", "Stun Gun", "Jet Pack", "Extension Ladder", "Radar Booster" };
+
+    private DiscordSocketClient _client;
+    private CommandService _commands;
+    private IServiceProvider _services;
+
+    public SpawnModule(IServiceProvider services)
+    {
+        _client = new DiscordSocketClient();
+        _commands = new CommandService();
+        _services = services;
+
+        _client.Log += LogAsync;
+        _commands.Log += LogAsync;
+    }
+
+    public async Task InitializeAsync()
+    {
+        await _client.LoginAsync(TokenType.Bot, "YOUR_DISCORD_TOKEN");
+        await _client.StartAsync();
+
+        await _commands.AddModuleAsync<SpawnModule>(_services);
+    }
+
+    private Task LogAsync(LogMessage log)
+    {
+        Console.WriteLine(log.Message);
+        return Task.CompletedTask;
+    }
+
+    [Command("spawn")]
+    public async Task SpawnEntity(string entityType, string entityName, int quantity = 1)
+    {
+        switch (entityType.ToLower())
+        {
+            case "monster":
+                await SpawnMonster(entityName, quantity);
+                break;
+            case "item":
+                await SpawnItem(entityName, quantity);
+                break;
+            case "turret":
+                await SpawnTurret(quantity);
+                break;
+            case "landmine":
+                await SpawnLandmine(quantity);
+                break;
+            default:
+                await ReplyAsync($"Invalid entity type: {entityType}");
+                break;
+        }
+    }
+
+    private async Task SpawnMonster(string monsterName, int quantity)
+    {
+        if (Array.Exists(InsideMonsterNames, element => element.Equals(monsterName, StringComparison.InvariantCultureIgnoreCase)) ||
+            Array.Exists(OutsideMonsterNames, element => element.Equals(monsterName, StringComparison.InvariantCultureIgnoreCase)))
+        {
+            await ReplyAsync($"Spawning {quantity} {monsterName} monsters...");
+            // Logic to spawn monsters
+        }
+        else
+        {
+            await ReplyAsync($"Invalid monster name: {monsterName}");
+        }
+    }
+
+    private async Task SpawnItem(string itemName, int quantity)
+    {
+        if (Array.Exists(ItemNames, element => element.Equals(itemName, StringComparison.InvariantCultureIgnoreCase)))
+        {
+            await ReplyAsync($"Spawning {quantity} {itemName} items...");
+            // Logic to spawn items
+        }
+        else
+        {
+            await ReplyAsync($"Invalid item name: {itemName}");
+        }
+    }
+
+    private async Task SpawnTurret(int quantity)
+    {
+        await ReplyAsync($"Spawning {quantity} turrets...");
+        // Logic to spawn turrets
+    }
+
+    private async Task SpawnLandmine(int quantity)
+    {
+        await ReplyAsync($"Spawning {quantity} landmines...");
+        // Logic to spawn landmines
+    }
+}
+
+    <Compile Include="MyProject.csproj" />
+    <!-- Other source code files -->
+  </ItemGroup>
+
+</Project>
